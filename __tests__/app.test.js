@@ -127,7 +127,7 @@ describe("GET /api/articles", () => {
             .get("/api/articles/333")
             .expect(404)
             .then(({ body }) => {
-                expect(body.message).toBe('Could not find an article with id 333')
+                expect(body.message).toBe('No items found for id 333')
             })
     })
 
@@ -146,7 +146,7 @@ describe("GET /api/articles", () => {
             .get("/api/articles/333/comments")
             .expect(404)
             .then(({ body }) => {
-                expect(body.message).toBe('Could not find comments for article id 333')
+                expect(body.message).toBe('No items found for id 333')
             })
     })
 })
@@ -176,6 +176,57 @@ describe("POST /api/articles/:article_id/comments", () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.message).toBe('Key (author)=(Trusk) is not present in table \"users\".')
+            })
+    })
+})
+
+describe("PATCH /api/articles/:article_id", () => {
+    test("200: Respond with the updated article", () => {
+        return request(app)
+            .patch("/api/articles/2")
+            .send({ inc_votes: 10})
+            .expect(200)
+            .then(({ body }) => {
+                let { article } = body
+                article = article[0]
+                expect(article.votes).toBe(10)
+                expect(article.article_id).toBe(2)
+                expect(typeof article.title).toBe('string')
+                expect(typeof article.topic).toBe('string')
+                expect(typeof article.author).toBe('string')
+                expect(typeof article.body).toBe('string')
+                expect(typeof article.created_at).toBe('string')
+                expect(typeof article.article_img_url).toBe('string')
+            })
+    })
+
+    test("400: Respond with an error if article id does not exist", () => {
+        return request(app)
+            .patch("/api/articles/222")
+            .send({ inc_votes: 10})
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('No items found for id 222')
+            })
+    })
+
+    test("400: Respond with an error if article id is not a number", () => {
+        return request(app)
+            .patch("/api/articles/two")
+            .send({ inc_votes: 10})
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Please enter a number for id and vote change')
+            })
+    })
+
+    test("400: Respond with an error if vote change is not a number", () => {
+        return request(app)
+            .patch("/api/articles/2")
+            .send({ inc_votes: "triangle"})
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('Please enter a number for id and vote change')
             })
     })
 })
