@@ -7,9 +7,7 @@ function getArticles(req, res, next) {
     if (article_id) {
         queryArticlesById(article_id).then( articles => {
             res.status(200).send({ articles: articles })
-        }).catch(err => {
-            next(err)
-        })
+        }).catch(err => next(err))
     } else {
         queryAllArticles(order_by).then( articles => {
             res.status(200).send({ articles: articles })
@@ -22,9 +20,7 @@ function getArticleComments(req, res, next) {
 
     queryArticleComments(article_id).then( comments => {
         res.status(200).send({ comments: comments })
-    }).catch(err => {
-        next(err)
-    })
+    }).catch(err => next(err))
 }
 
 module.exports = { getArticles, getArticleComments }
