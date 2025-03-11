@@ -1,4 +1,4 @@
-const { queryArticlesById, queryAllArticles} = require('../models/articles.model')
+const { queryArticlesById, queryAllArticles, queryArticleComments } = require('../models/articles.model')
 
 function getArticles(req, res, next) {
     const { article_id } = req.params
@@ -6,9 +6,6 @@ function getArticles(req, res, next) {
 
     if (article_id) {
         queryArticlesById(article_id).then( articles => {
-            if (articles.length === 0) {
-                return Promise.reject({status: 404, message: `Could not find an article with id ${article_id}`})
-            }
             res.status(200).send({ articles: articles })
         }).catch(err => {
             next(err)
@@ -20,5 +17,14 @@ function getArticles(req, res, next) {
     }
 }
 
+function getArticleComments(req, res, next) {
+    const { article_id } = req.params
 
-module.exports = { getArticles }
+    queryArticleComments(article_id).then( comments => {
+        res.status(200).send({ comments: comments })
+    }).catch(err => {
+        next(err)
+    })
+}
+
+module.exports = { getArticles, getArticleComments }
