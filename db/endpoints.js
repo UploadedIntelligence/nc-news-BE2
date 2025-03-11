@@ -12,6 +12,8 @@ app.get('/api', (req, res) => {
 
 app.get('/api/topics', getTopics)
 
+app.get('/api/articles', getArticles)
+
 app.get('/api/articles/:article_id', getArticles)
 
 app.use(customError)
