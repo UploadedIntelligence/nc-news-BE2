@@ -150,3 +150,32 @@ describe("GET /api/articles", () => {
             })
     })
 })
+
+describe("POST /api/articles/:article_id/comments", () => {
+    test("200: Responds with the comment that was posted", () => {
+        return request(app)
+            .post("/api/articles/2/comments")
+            .send({username: "rogersop", body: "Some random text"})
+            .expect(200)
+            .then(({ body }) => {
+                const { comment } = body;
+                console.log(body)
+                expect(comment.comment_id).toBe(19)
+                expect(comment.article_id).toBe(2)
+                expect(comment.body).toBe('Some random text')
+                expect(comment.votes).toBe(0)
+                expect(comment.author).toBe("rogersop")
+                expect(typeof comment.created_at).toBe('string')
+            })
+    })
+
+    test("400: Respond with an error when username does not exist", () => {
+        return request(app)
+            .post("/api/articles/2/comments")
+            .send({username: "Trusk", body: "Some random text"})
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe('Key (author)=(Trusk) is not present in table \"users\".')
+            })
+    })
+})
