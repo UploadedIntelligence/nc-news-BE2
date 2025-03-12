@@ -6,6 +6,7 @@ const { getArticles, getArticleComments, patchArticle} = require('./controllers/
 const internalServerError = require('./errors/internal-server-error')
 const { customError } = require('./errors/invalid-data-type-error')
 const { postComment, deleteComment} = require("./controllers/comments.controller");
+const { getUsers } = require("./controllers/users.controller");
 
 app.get('/api', (req, res) => {
     res.status(200).send({ endpoints: data})
@@ -14,6 +15,8 @@ app.get('/api', (req, res) => {
 app.get('/api/topics', getTopics)
 
 app.get('/api/articles', getArticles)
+
+app.get('/api/users', getUsers)
 
 app.get('/api/articles/:article_id', getArticles)
 
