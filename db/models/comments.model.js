@@ -1,11 +1,19 @@
 const db = require('../connection')
 
-function queryPostComment(author, body, article_id) {
+async function queryPostComment(author, body, article_id) {
     const queryStr = `INSERT INTO comments(article_id, body, author) 
                 VALUES ($1, $2, $3)
                 RETURNING *`
 
-    return db.query(queryStr, [article_id, body, author]).then(({ rows }) => rows[0])
+    if (/^[0-9]+$/.test(article_id)) {
+        if (author !== undefined) {
+            return db.query(queryStr, [article_id, body, author]).then(({ rows }) => rows[0])
+        } else {
+            return Promise.reject({ status: 400, message: 'Username field is required'})
+        }
+    } else {
+        return Promise.reject({ status: 400, message: 'Please enter a number for id'})
+    }
 }
 
 async function queryDeleteComment(comment_id) {
@@ -23,11 +31,14 @@ async function queryDeleteComment(comment_id) {
 
 }
 
+
 function commentExists(comment_id) {
     const queryStr = `SELECT * FROM comments WHERE comment_id = $1`
     return db.query(queryStr, [comment_id]).then(({ rows }) => {
         return rows.length > 0
     })
 }
+
+
 
 module.exports = { queryPostComment, queryDeleteComment }
