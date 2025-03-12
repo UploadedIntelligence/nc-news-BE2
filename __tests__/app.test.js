@@ -46,11 +46,11 @@ describe("GET /api/topics", () => {
 describe("GET /api/articles", () => {
     test("200: Responds with an article object", () => {
         return request(app)
-            .get("/api/articles/2")
+            .get("/api/articles/1")
             .expect(200)
             .then(({body}) => {
                 const {article} = body
-                expect(article.article_id).toBe(2)
+                expect(article.article_id).toBe(1)
                 expect(typeof article.title).toBe('string')
                 expect(typeof article.topic).toBe('string')
                 expect(typeof article.author).toBe('string')
@@ -58,6 +58,7 @@ describe("GET /api/articles", () => {
                 expect(typeof article.created_at).toBe('string')
                 expect(typeof article.votes).toBe('number')
                 expect(typeof article.article_img_url).toBe('string')
+                expect(article.comment_count).toBe(11)
             })
     })
 

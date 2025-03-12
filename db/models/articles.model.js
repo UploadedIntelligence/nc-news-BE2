@@ -18,7 +18,11 @@ function queryArticlesById(article_id) {
     let queryStr = 'SELECT * FROM articles'
 
     if (checkIsNum(article_id)) {
-        queryStr += ' WHERE article_id = $1'
+        queryStr = `SELECT *, 
+       (SELECT COUNT(*)::INT FROM comments WHERE article_id = $1) comment_count 
+        FROM articles 
+        WHERE article_id = $1`
+
     } else if (article_id !== undefined) {
         return Promise.reject({ status: 400, message: 'Please enter a number for id' })
     }
