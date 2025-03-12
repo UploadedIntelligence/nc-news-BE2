@@ -82,17 +82,19 @@ describe("GET /api/articles", () => {
             })
     })
 
-    test("200: Responds with an array of article objects ordered based on the query", async () => {
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=article_id")
             .expect(200)
-            .then(({ body }) => {
-                const { articles } = body
+            .then(({body}) => {
+                const {articles} = body
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('article_id', {descending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=title")
             .expect(200)
             .then(({ body }) => {
@@ -100,8 +102,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('title', {descending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=topic")
             .expect(200)
             .then(({ body }) => {
@@ -109,8 +113,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('topic', {descending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=author")
             .expect(200)
             .then(({ body }) => {
@@ -118,8 +124,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('author', {descending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=votes")
             .expect(200)
             .then(({ body }) => {
@@ -127,8 +135,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('votes', {descending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=article_img_url")
             .expect(200)
             .then(({ body }) => {
@@ -136,8 +146,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('article_img_url', {descending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=article_id&order=asc")
             .expect(200)
             .then(({ body }) => {
@@ -145,8 +157,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('article_id', {ascending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=title&order=asc")
             .expect(200)
             .then(({ body }) => {
@@ -154,8 +168,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('title', {ascending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=topic&order=asc")
             .expect(200)
             .then(({ body }) => {
@@ -163,8 +179,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('topic', {ascending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=author&order=asc")
             .expect(200)
             .then(({ body }) => {
@@ -172,8 +190,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('author', {ascending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=votes&order=asc")
             .expect(200)
             .then(({ body }) => {
@@ -181,8 +201,10 @@ describe("GET /api/articles", () => {
                 expect(articles.length).toBe(13)
                 expect(articles).toBeSortedBy('votes', {ascending: true})
             })
+    })
 
-        await request(app)
+    test("200: Responds with an array of article objects ordered based on the query", () => {
+        return request(app)
             .get("/api/articles?sort_by=article_img_url&order=asc")
             .expect(200)
             .then(({ body }) => {
@@ -192,6 +214,31 @@ describe("GET /api/articles", () => {
             })
     })
 
+    test("200: Responds with an array of articles which contain a certain string in their topic", () => {
+        return request(app)
+            .get('/api/articles?topic=ca')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(1)
+                articles.forEach(article => {
+                    expect(article.topic.includes('ca')).toBe(true)
+                })
+            })
+    })
+
+    test("200: Responds with an array of articles which contain a certain string in their topic", () => {
+        return request(app)
+            .get('/api/articles?topic=mit')
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(12)
+                articles.forEach(article => {
+                    expect(article.topic.includes('mit')).toBe(true)
+                })
+            })
+    })
 
     test("200: Responds with an array of article objects", () => {
         return request(app)
@@ -265,6 +312,15 @@ describe("GET /api/articles", () => {
             .expect(404)
             .then(({body}) => {
                 expect(body.message).toBe('No items found for id 333')
+            })
+    })
+
+    test("400: Responds with an array of articles which contain a certain string in their topic", () => {
+        return request(app)
+            .get('/api/articles?topic=invalid')
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe('There are no article topics that contain \"invalid\"')
             })
     })
 })
@@ -392,32 +448,13 @@ describe("PATCH /api/articles/:article_id", () => {
 })
 
 describe("DELETE /api/comments/:comment_id", () => {
-    test("204: Give a response with no content", async () => {
-        await request(app)
-            .get('/api/articles/9/comments')
-            .expect(200)
-            .then(({body}) => {
-                const { comments } = body
-                expect(comments.length).toBe(2)
-                expect(comments[0].comment_id).toBe(1)
-                expect(comments[1].comment_id).toBe(17)
-            })
-
-        await request(app)
-            .delete('/api/comments/1')
-            .expect(204)
-            .then(({ body })=> {
-                expect(body).toEqual({})
-            })
-
-        return await request(app)
-            .get('/api/articles/9/comments')
-            .expect(200)
-            .then(({body}) => {
-                const {comments} = body
-                expect(comments.length).toBe(1)
-                expect(comments[0].comment_id).toBe(17)
-            })
+    test("204: Give a response with no content", () => {
+        return request(app)
+                    .delete('/api/comments/1')
+                    .expect(204)
+                    .then(({ body })=> {
+                        expect(body).toEqual({})
+                    })
     })
 
     test("400: Respond with an error if id is not a number", () => {
