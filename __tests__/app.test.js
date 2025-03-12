@@ -82,6 +82,117 @@ describe("GET /api/articles", () => {
             })
     })
 
+    test("200: Responds with an array of article objects ordered based on the query", async () => {
+        await request(app)
+            .get("/api/articles?sort_by=article_id")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('article_id', {descending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=title")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('title', {descending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=topic")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('topic', {descending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=author")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('author', {descending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=votes")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('votes', {descending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=article_img_url")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('article_img_url', {descending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=article_id&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('article_id', {ascending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=title&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('title', {ascending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=topic&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('topic', {ascending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=author&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('author', {ascending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=votes&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('votes', {ascending: true})
+            })
+
+        await request(app)
+            .get("/api/articles?sort_by=article_img_url&order=asc")
+            .expect(200)
+            .then(({ body }) => {
+                const { articles } = body
+                expect(articles.length).toBe(13)
+                expect(articles).toBeSortedBy('article_img_url', {ascending: true})
+            })
+    })
+
+
     test("200: Responds with an array of article objects", () => {
         return request(app)
             .get("/api/articles/1/comments")
@@ -99,6 +210,24 @@ describe("GET /api/articles", () => {
 
                 })
                 expect(comments).toBeSortedBy('created_at', {descending: true})
+            })
+    })
+
+    test("400: Responds with an error if query string is invalid", () => {
+        return request(app)
+            .get("/api/articles?sort_by=invalid")
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe('Sort_by must be a valid column')
+            })
+    })
+
+    test("400: Responds with an error if query string is invalid", () => {
+        return request(app)
+            .get("/api/articles?order=invalid")
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe('Order type can only be ASC or DESC')
             })
     })
 
@@ -168,7 +297,39 @@ describe("POST /api/articles/:article_id/comments", () => {
             })
     })
 
-    test("400: Respond with an error when username does not exist", () => {
+
+
+    test("400: Respond with an error when id is not a number", () => {
+        return request(app)
+            .post("/api/articles/two/comments")
+            .send({username: "rogersop", body: "Some random text"})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe('Please enter a number for id')
+            })
+    })
+
+    test("400: Respond with an error when field username is missing", () => {
+        return request(app)
+            .post("/api/articles/2/comments")
+            .send({body: "Some random text"})
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe('Username field is required')
+            })
+    })
+
+    test("404: Respond with an error when article with given id is not found", () => {
+        return request(app)
+            .post("/api/articles/222/comments")
+            .send({username: "rogersop", body: "Some random text"})
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("Key (article_id)=(222) is not present in table \"articles\".")
+            })
+    })
+
+    test("404: Respond with an error when username does not exist", () => {
         return request(app)
             .post("/api/articles/2/comments")
             .send({username: "Trusk", body: "Some random text"})
@@ -177,6 +338,7 @@ describe("POST /api/articles/:article_id/comments", () => {
                 expect(body.message).toBe('Key (author)=(Trusk) is not present in table \"users\".')
             })
     })
+
 })
 
 describe("PATCH /api/articles/:article_id", () => {

@@ -26,18 +26,22 @@ function queryArticlesById(article_id) {
     return itemsFound(queryStr, {article_id})
 }
 
-function queryAllArticles(order_by = 'desc') {
-    // const allowedOrder = ['desc', 'asc']
+function queryAllArticles(order = 'desc', sort_by = 'created_at') {
+    const allowedOrder = ['desc', 'asc']
+    const allowedSort = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
 
     let queryStr = `SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url,
         (SELECT COUNT(*)::INT FROM comments c 
                               WHERE c.article_id = a.article_id) comment_count
     FROM articles a
-    ORDER BY a.created_at ${order_by}`;
+    ORDER BY a.${sort_by} ${order}`;
 
-    // if (!allowedOrder.includes(order_by)) {
-    //     return Promise.reject({status: 400, message: 'Order type can only be ASC or DESC'})
-    // }
+    if (!allowedOrder.includes(order)) {
+        return Promise.reject({status: 400, message: 'Order type can only be ASC or DESC'})
+    }
+    if (!allowedSort.includes(sort_by)) {
+        return Promise.reject({status: 400, message: 'Sort_by must be a valid column'})
+    }
 
     return db.query(queryStr).then(({ rows }) => rows)
 }
