@@ -2,14 +2,14 @@ const { queryArticlesById, queryAllArticles, queryArticleComments, queryPatchArt
 
 function getArticles(req, res, next) {
     const { article_id } = req.params
-    const { order, sort_by } = req.query
+    const { order, sort_by, topic } = req.query
 
     if (article_id) {
         queryArticlesById(article_id).then( articles => {
             res.status(200).send({ article: articles[0] })
         }).catch(err => next(err))
     } else {
-        queryAllArticles(order, sort_by).then( articles => {
+        queryAllArticles(order, sort_by, topic).then( articles => {
             res.status(200).send({ articles: articles })
         }).catch(err => next(err))
     }

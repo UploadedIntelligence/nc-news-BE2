@@ -26,15 +26,14 @@ function queryArticlesById(article_id) {
     return itemsFound(queryStr, {article_id})
 }
 
-function queryAllArticles(order = 'desc', sort_by = 'created_at') {
+function queryAllArticles(order = 'desc', sort_by = 'created_at', topic) {
     const allowedOrder = ['desc', 'asc']
     const allowedSort = ['article_id', 'title', 'topic', 'author', 'body', 'created_at', 'votes', 'article_img_url']
 
     let queryStr = `SELECT a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url,
         (SELECT COUNT(*)::INT FROM comments c 
                               WHERE c.article_id = a.article_id) comment_count
-    FROM articles a
-    ORDER BY a.${sort_by} ${order}`;
+    FROM articles a`
 
     if (!allowedOrder.includes(order)) {
         return Promise.reject({status: 400, message: 'Order type can only be ASC or DESC'})
@@ -42,6 +41,18 @@ function queryAllArticles(order = 'desc', sort_by = 'created_at') {
     if (!allowedSort.includes(sort_by)) {
         return Promise.reject({status: 400, message: 'Sort_by must be a valid column'})
     }
+
+    if (topic) {
+        queryStr += ` WHERE a.topic LIKE $1 ORDER BY a.${sort_by} ${order}`
+        return db.query(queryStr, [`%${topic}%`]).then(({ rows }) => {
+            if (rows.length === 0) {
+                return Promise.reject({status: 400, message: `There are no article topics that contain "${topic}"`})
+            }
+            return rows
+        })
+    }
+
+    queryStr += ` ORDER BY a.${sort_by} ${order}`
 
     return db.query(queryStr).then(({ rows }) => rows)
 }
