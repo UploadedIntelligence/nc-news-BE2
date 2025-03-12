@@ -94,5 +94,9 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "returns no content",
+    "exampleResponse": {}
   }
 }

@@ -5,7 +5,7 @@ const { getTopics } = require('./controllers/topics.controller')
 const { getArticles, getArticleComments, patchArticle} = require('./controllers/articles.controller')
 const internalServerError = require('./errors/internal-server-error')
 const { customError } = require('./errors/invalid-data-type-error')
-const { postComment } = require("./controllers/comments.controller");
+const { postComment, deleteComment} = require("./controllers/comments.controller");
 
 app.get('/api', (req, res) => {
     res.status(200).send({ endpoints: data})
@@ -24,6 +24,8 @@ app.use(express.json())
 app.post('/api/articles/:article_id/comments', postComment)
 
 app.patch('/api/articles/:article_id', patchArticle)
+
+app.delete('/api/comments/:comment_id', deleteComment)
 
 app.all('*', (req, res) => {
     res.status(404).send({ message: 'Path not found' })

@@ -8,4 +8,26 @@ function queryPostComment(author, body, article_id) {
     return db.query(queryStr, [article_id, body, author]).then(({ rows }) => rows[0])
 }
 
-module.exports = { queryPostComment }
+async function queryDeleteComment(comment_id) {
+    const queryStr = `DELETE FROM comments WHERE comment_id = $1`
+
+    if (/^[0-9]+$/.test(comment_id)) {
+        if (await commentExists(comment_id)) {
+            return db.query(queryStr, [comment_id])
+        } else {
+            return Promise.reject({status: 404, message: `No comments found with id ${comment_id}`})
+        }
+    } else {
+        return Promise.reject({status: 400, message: 'Please enter a number for id'})
+    }
+
+}
+
+function commentExists(comment_id) {
+    const queryStr = `SELECT * FROM comments WHERE comment_id = $1`
+    return db.query(queryStr, [comment_id]).then(({ rows }) => {
+        return rows.length > 0
+    })
+}
+
+module.exports = { queryPostComment, queryDeleteComment }

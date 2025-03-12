@@ -6,7 +6,7 @@ function getArticles(req, res, next) {
 
     if (article_id) {
         queryArticlesById(article_id).then( articles => {
-            res.status(200).send({ articles: articles })
+            res.status(200).send({ article: articles[0] })
         }).catch(err => next(err))
     } else {
         queryAllArticles(order_by).then( articles => {
@@ -28,7 +28,7 @@ function patchArticle(req, res, next) {
     const voteChange = req.body.inc_votes
 
     queryPatchArticle(article_id, voteChange).then( article => {
-        res.status(200).send({ article: article })
+        res.status(200).send({ article: article[0] })
     }).catch(err => {
 
         next(err)
