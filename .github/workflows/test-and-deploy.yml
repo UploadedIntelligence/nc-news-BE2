@@ -1,0 +1,43 @@
+name: Test and deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: Test
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Use PostreSQL
+        uses: harmon758/postresql-action@v1
+        with:
+          PostgreSQL db: 'my_db'
+          PostgreSQL user: 'test_user'
+          PostgreSQL password: 'test_password'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm t
+
+  deploy:
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          api-key: ${{ secrets.RENDER_API_KEY }}
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
