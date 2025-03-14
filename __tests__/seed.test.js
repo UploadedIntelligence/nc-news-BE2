@@ -449,7 +449,7 @@ describe('seed', () => {
   });
 });
 
-describe.skip("tests to check common errors", () => {
+describe("tests to check common errors", () => {
   test("check all comments for a specific article have the correct article_id", () => {
     return db
         .query(`SELECT * FROM comments WHERE article_id = 3`)
