@@ -11,7 +11,7 @@
     "start": "node listen.js",
     "test-seed": "jest seed.test.js",
     "seed-prod": "cross-env NODE_ENV=production npm run seed-dev",
-    "start-prod": "cross-env NODE_ENV=production npm run start"
+    "start-prod": "cross-env npm run start"
   },
   "repository": {
     "type": "git",
