@@ -38,8 +38,7 @@ jobs:
 
       - name: Deploy to production
         run: |
-          curl -X GET \
-          -H 'https://api.render.com/v1/srv-cv9f123qf0us73atri20 \
+          curl -X GET 'https://api.render.com/v1/${{ secrets.RENDER_SERVICE_ID }}'
           -H 'Accept: application/json' \
           -H 'Authorization: Bearer ${{ secrets.RENDER_API_KEY }}'
 #        uses: johnbeynon/render-deploy-action@v0.0.8
