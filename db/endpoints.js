@@ -1,6 +1,8 @@
 const express = require('express')
 const data = require('../endpoints.json')
 const app = express()
+const apiRouter = express.Router()
+const articlesRouter = express.Router()
 const { getTopics } = require('./controllers/topics.controller')
 const { getArticles, getArticleComments, patchArticle} = require('./controllers/articles.controller')
 const internalServerError = require('./errors/internal-server-error')
@@ -8,27 +10,29 @@ const { customError } = require('./errors/invalid-data-type-error')
 const { postComment, deleteComment} = require("./controllers/comments.controller");
 const { getUsers } = require("./controllers/users.controller");
 
-app.get('/api', (req, res) => {
+app.use(express.json())
+app.use('/api', apiRouter)
+apiRouter.use('/articles', articlesRouter)
+
+apiRouter.get('', (req, res) => {
     res.status(200).send({ endpoints: data})
 })
 
-app.get('/api/topics', getTopics)
+apiRouter.get('/topics', getTopics)
 
-app.get('/api/articles', getArticles)
+apiRouter.get('/users', getUsers)
 
-app.get('/api/users', getUsers)
+articlesRouter.get('', getArticles)
 
-app.get('/api/articles/:article_id', getArticles)
+articlesRouter.route('/:article_id')
+    .get(getArticles)
+    .patch(patchArticle)
 
-app.get('/api/articles/:article_id/comments', getArticleComments)
+articlesRouter.route('/:article_id/comments')
+    .get(getArticleComments)
+    .post(postComment)
 
-app.use(express.json())
-
-app.post('/api/articles/:article_id/comments', postComment)
-
-app.patch('/api/articles/:article_id', patchArticle)
-
-app.delete('/api/comments/:comment_id', deleteComment)
+apiRouter.delete('/comments/:comment_id', deleteComment)
 
 app.all('*', (req, res) => {
     res.status(404).send({ message: 'Path not found' })
