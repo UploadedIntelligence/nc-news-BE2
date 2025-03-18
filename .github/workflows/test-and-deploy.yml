@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Deploy to production
-        run: |
+        run: >
           curl -X GET "https://api.render.com/v1/services/srv-cv9f123qf0us73atri20" 
           -H "Accept: application/json" 
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
