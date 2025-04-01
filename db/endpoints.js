@@ -9,8 +9,10 @@ const internalServerError = require('./errors/internal-server-error')
 const { customError } = require('./errors/invalid-data-type-error')
 const { postComment, deleteComment} = require("./controllers/comments.controller");
 const { getUsers } = require("./controllers/users.controller");
+const cors = require('cors')
 
 app.use(express.json())
+app.use(cors())
 app.use('/api', apiRouter)
 apiRouter.use('/articles', articlesRouter)
 
