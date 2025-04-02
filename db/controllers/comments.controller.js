@@ -1,4 +1,4 @@
-const { queryPostComment, queryDeleteComment} = require('../models/comments.model')
+const { queryPostComment, queryDeleteComment, queryPatchVotes} = require('../models/comments.model')
 
 function postComment(req, res, next) {
     const { username, body } = req.body;
@@ -19,4 +19,12 @@ function deleteComment(req, res, next) {
     }).catch(err => next(err))
 }
 
-module.exports = { postComment, deleteComment }
+function patchVotes(req, res, next) {
+    const { article_id, vote } = req.params;
+
+    queryPatchVotes(article_id, vote).then((article) => {
+        res.status(200).send({article: article})
+    }).catch(err => next(err))
+}
+
+module.exports = { postComment, deleteComment, patchVotes }

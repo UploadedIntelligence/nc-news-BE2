@@ -7,7 +7,7 @@ const { getTopics } = require('./controllers/topics.controller')
 const { getArticles, getArticleComments, patchArticle} = require('./controllers/articles.controller')
 const internalServerError = require('./errors/internal-server-error')
 const { customError } = require('./errors/invalid-data-type-error')
-const { postComment, deleteComment} = require("./controllers/comments.controller");
+const { postComment, deleteComment, patchVotes} = require("./controllers/comments.controller");
 const { getUsers } = require("./controllers/users.controller");
 const cors = require('cors')
 
@@ -29,6 +29,9 @@ articlesRouter.get('', getArticles)
 articlesRouter.route('/:article_id')
     .get(getArticles)
     .patch(patchArticle)
+
+articlesRouter.route('/:article_id/:vote')
+    .patch(patchVotes)
 
 articlesRouter.route('/:article_id/comments')
     .get(getArticleComments)

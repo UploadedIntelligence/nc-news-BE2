@@ -448,6 +448,46 @@ describe("PATCH /api/articles/:article_id", () => {
     })
 })
 
+describe("PATCH /api/articles/:article_id/:vote", () => {
+    test("200: Respond with the upvoted article and its updated votes", () => {
+        return request(app)
+            .get("/api/articles/10")
+            .expect(200)
+            .then(({body}) => {
+                const {article} = body;
+                let votes = article.votes
+                expect(article.article_id).toBe(10)
+                return request(app)
+                    .patch("/api/articles/10/upvote")
+                    .expect(200)
+                    .then(({body}) => {
+                        const {article} = body;
+                        expect(article.votes).toBe(votes + 1)
+                    })
+            })
+    })
+
+    test("200: Respond with the downvoted article and its updated votes", () => {
+        return request(app)
+            .get("/api/articles/10")
+            .expect(200)
+            .then(({body}) => {
+                const {article} = body;
+                let votes = article.votes
+                expect(article.article_id).toBe(10)
+                return request(app)
+                    .patch("/api/articles/10/downvote")
+                    .expect(200)
+                    .then(({body}) => {
+                        const {article} = body;
+                        expect(article.votes).toBe(votes - 1)
+                    })
+            })
+    })
+
+})
+
+
 describe("DELETE /api/comments/:comment_id", () => {
     test("204: Give a response with no content", () => {
         return request(app)
@@ -493,3 +533,4 @@ describe("GET /api/users", () => {
             })
     })
 })
+

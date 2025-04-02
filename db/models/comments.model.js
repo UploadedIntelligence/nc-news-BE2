@@ -39,6 +39,23 @@ function commentExists(comment_id) {
     })
 }
 
+function queryPatchVotes(article_id, vote) {
+    const queryStr = `UPDATE articles SET votes = votes + $1
+                        WHERE article_id = $2
+                        RETURNING *`
+    if (vote === 'upvote') {
+        vote = 1
+    } else if (vote === 'downvote') {
+        vote = -1
+    } else {
+        return Promise.reject({status: 400, message: 'Vote must be either upvote or downvote'})
+    }
+
+    return db.query(queryStr, [vote, article_id]).then(({ rows }) => {
+        return rows[0]
+    })
+}
 
 
-module.exports = { queryPostComment, queryDeleteComment }
+
+module.exports = { queryPostComment, queryDeleteComment, queryPatchVotes }
