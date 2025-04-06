@@ -1,7 +1,7 @@
 const db = require('../connection')
 
 function checkIsNum(valueToCheck) {
-    return /^[0-9]+$/.test(valueToCheck)
+    return /^-?[0-9]+$/.test(valueToCheck)
 }
 
 function itemsFound(queryStr, queryParams) {
@@ -73,7 +73,7 @@ function queryArticleComments(article_id, order_by = 'desc') {
     }
 }
 
-function queryPatchArticle (article_id, voteChange) {
+function queryPatchArticleVotes (article_id, voteChange) {
     const queryStr = `UPDATE articles SET votes = votes + $1 
                 WHERE article_id = $2
                 RETURNING *`
@@ -85,4 +85,5 @@ function queryPatchArticle (article_id, voteChange) {
     }
 }
 
-module.exports = { queryArticlesById, queryAllArticles, queryArticleComments, queryPatchArticle }
+
+module.exports = { queryArticlesById, queryAllArticles, queryArticleComments, queryPatchArticleVotes }

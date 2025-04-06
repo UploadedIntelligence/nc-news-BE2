@@ -30,6 +30,20 @@ async function queryDeleteComment(comment_id) {
     }
 
 }
+// TBD
+async function queryPatchCommentVotes(comment_id, inc_votes) {
+    const queryStr = `UPDATE comments SET votes = votes + $1 
+                        WHERE comment_id = $2 RETURNING *`
+
+    if (await commentExists(comment_id)) {
+        return db.query(queryStr, [inc_votes, comment_id]).then(({rows}) => {
+            return rows[0]
+        })
+    } else {
+        return Promise.reject({status: 404, message: `No comments found with id ${comment_id}`})
+    }
+    //No number for id test
+}
 
 
 function commentExists(comment_id) {
@@ -39,23 +53,8 @@ function commentExists(comment_id) {
     })
 }
 
-function queryPatchVotes(article_id, vote) {
-    const queryStr = `UPDATE articles SET votes = votes + $1
-                        WHERE article_id = $2
-                        RETURNING *`
-    if (vote === 'upvote') {
-        vote = 1
-    } else if (vote === 'downvote') {
-        vote = -1
-    } else {
-        return Promise.reject({status: 400, message: 'Vote must be either upvote or downvote'})
-    }
-
-    return db.query(queryStr, [vote, article_id]).then(({ rows }) => {
-        return rows[0]
-    })
-}
 
 
 
-module.exports = { queryPostComment, queryDeleteComment, queryPatchVotes }
+
+module.exports = { queryPostComment, queryDeleteComment, queryPatchCommentVotes }

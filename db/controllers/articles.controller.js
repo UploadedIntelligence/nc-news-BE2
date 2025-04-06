@@ -1,4 +1,5 @@
-const { queryArticlesById, queryAllArticles, queryArticleComments, queryPatchArticle} = require('../models/articles.model')
+const { queryArticlesById, queryAllArticles, queryArticleComments, queryPatchArticleVotes} = require('../models/articles.model')
+
 
 function getArticles(req, res, next) {
     const { article_id } = req.params
@@ -23,11 +24,11 @@ function getArticleComments(req, res, next) {
     }).catch(err => next(err))
 }
 
-function patchArticle(req, res, next) {
+function patchArticleVotes(req, res, next) {
     const { article_id } = req.params
     const voteChange = req.body.inc_votes
 
-    queryPatchArticle(article_id, voteChange).then( article => {
+    queryPatchArticleVotes(article_id, voteChange).then( article => {
         res.status(200).send({ article: article[0] })
     }).catch(err => {
 
@@ -35,4 +36,5 @@ function patchArticle(req, res, next) {
     })
 }
 
-module.exports = { getArticles, getArticleComments, patchArticle }
+
+module.exports = { getArticles, getArticleComments, patchArticleVotes }

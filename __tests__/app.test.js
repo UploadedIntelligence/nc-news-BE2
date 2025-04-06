@@ -402,11 +402,11 @@ describe("PATCH /api/articles/:article_id", () => {
     test("200: Respond with the updated article", () => {
         return request(app)
             .patch("/api/articles/2")
-            .send({inc_votes: 10})
+            .send({inc_votes: -10})
             .expect(200)
             .then(({body}) => {
                 let {article} = body
-                expect(article.votes).toBe(10)
+                expect(article.votes).toBe(-10)
                 expect(article.article_id).toBe(2)
                 expect(typeof article.title).toBe('string')
                 expect(typeof article.topic).toBe('string')
@@ -448,45 +448,19 @@ describe("PATCH /api/articles/:article_id", () => {
     })
 })
 
-describe("PATCH /api/articles/:article_id/:vote", () => {
-    test("200: Respond with the upvoted article and its updated votes", () => {
+
+describe("PATCH /api/comments/:comment_id", () => {
+    test("204: Respond with the updated comment", () => {
         return request(app)
-            .get("/api/articles/10")
+            .patch('/api/comments/1')
+            .send({inc_votes: 1})
             .expect(200)
-            .then(({body}) => {
-                const {article} = body;
-                let votes = article.votes
-                expect(article.article_id).toBe(10)
-                return request(app)
-                    .patch("/api/articles/10/upvote")
-                    .expect(200)
-                    .then(({body}) => {
-                        const {article} = body;
-                        expect(article.votes).toBe(votes + 1)
-                    })
+            .then(({ body }) => {
+                const { comment } = body
+                expect(comment.votes).toBe(17)
             })
     })
-
-    test("200: Respond with the downvoted article and its updated votes", () => {
-        return request(app)
-            .get("/api/articles/10")
-            .expect(200)
-            .then(({body}) => {
-                const {article} = body;
-                let votes = article.votes
-                expect(article.article_id).toBe(10)
-                return request(app)
-                    .patch("/api/articles/10/downvote")
-                    .expect(200)
-                    .then(({body}) => {
-                        const {article} = body;
-                        expect(article.votes).toBe(votes - 1)
-                    })
-            })
-    })
-
 })
-
 
 describe("DELETE /api/comments/:comment_id", () => {
     test("204: Give a response with no content", () => {
@@ -534,3 +508,16 @@ describe("GET /api/users", () => {
     })
 })
 
+describe("GET /api/users/:username", () => {
+    test("200: Responds with a user object", () => {
+        return request(app)
+            .get('/api/users/butter_bridge')
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body
+                expect(users.username).toBe('butter_bridge')
+                expect(typeof users.name).toBe('string')
+                expect(typeof users.avatar_url).toBe('string')
+            })
+    })
+})
